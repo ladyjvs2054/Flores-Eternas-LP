@@ -18,6 +18,9 @@ jobs:
           git config --global user.email "actions@github.com"
           git remote add upstream https://github.com/ladyjvs2054/Flores-Eternas-LP.git
           git fetch upstream
+          # Checkout tu rama testing desde origin
           git checkout testing
+          # Merge de upstream/testing en tu testing
           git merge upstream/testing
+          # Push al fork (origin)
           git push origin testing
