@@ -666,56 +666,24 @@ public class PedidoService {
         switch (estado) {
             case EN_PROCESO:
                 asunto = "Pedido #" + pedido.getId() + " en proceso";
-                cuerpo = "<h2>Tu pedido #" + pedido.getId() + " está en proceso</h2>"
-                        + "<p>Hola, tu pedido ha sido recibido y se encuentra en proceso.</p>"
-                        + "<p>Te notificaremos cuando avance a preparación.</p>"
-                        + "<p>¡Gracias por preferirnos!</p>";
+                cuerpo = EmailTemplates.notificacionEnProceso(pedido.getId(), frontendUrl);
                 break;
             case EN_PREPARACION:
-                asunto = "Pedido #" + pedido.getId() + " en preparación";
-                cuerpo = "<h2>Tu pedido #" + pedido.getId() + " está en preparación</h2>"
-                        + "<p>Hola, tu pedido está siendo preparado con los mejores materiales.</p>"
-                        + "<p>Pronto estará listo para entrega.</p>";
+                asunto = "Tu pedido #" + pedido.getId() + " está en preparación";
+                cuerpo = EmailTemplates.notificacionEnPreparacion(pedido.getId(), frontendUrl);
                 break;
             case PENDIENTE_DE_ENTREGA:
-                StringBuilder cuerpoBuilder = new StringBuilder();
-                cuerpoBuilder.append("<h2>Tu pedido #").append(pedido.getId()).append(" está listo para entrega</h2>")
-                        .append("<p>Hola, tu pedido ya está listo para ser entregado.</p>");
-
-                BigDecimal pendiente = pedido.getTotalPedido().subtract(pedido.getMontoPagado());
-                if (pendiente.compareTo(BigDecimal.ZERO) > 0) {
-                    cuerpoBuilder.append("<p>Tienes un saldo pendiente de <strong>$")
-                            .append(pendiente.setScale(0, RoundingMode.HALF_UP))
-                            .append(" COP</strong>.</p>");
-
-                    if (frontendUrl != null && !frontendUrl.isBlank() && pedido.getPagoToken() != null) {
-                        String linkPago = frontendUrl + "/pago/personalizado/" + pedido.getPagoToken();
-                        cuerpoBuilder.append("<p>Para pagar tu saldo pendiente, haz clic en el siguiente enlace:</p>")
-                                .append("<p><a href=\"").append(linkPago)
-                                .append("\" style=\"display:inline-block;padding:12px 24px;background-color:#8C5A3C;color:white;text-decoration:none;border-radius:8px;\">Pagar ahora</a></p>")
-                                .append("<p>O copia este enlace en tu navegador:<br>")
-                                .append(linkPago).append("</p>");
-                    } else if (pedido.getPagoToken() != null) {
-                        cuerpoBuilder.append("<p>Usa este código de pago en nuestra web: <strong>")
-                                .append(pedido.getPagoToken()).append("</strong></p>");
-                    }
-                }
-
-                cuerpoBuilder.append("<p>¡Gracias por preferirnos!</p>");
                 asunto = "Pedido #" + pedido.getId() + " listo para entrega";
-                cuerpo = cuerpoBuilder.toString();
+                BigDecimal pendiente = pedido.getTotalPedido().subtract(pedido.getMontoPagado());
+                cuerpo = EmailTemplates.notificacionPendienteEntrega(pedido.getId(), pendiente, frontendUrl, pedido.getPagoToken());
                 break;
             case ENTREGADO:
-                asunto = "Pedido #" + pedido.getId() + " entregado";
-                cuerpo = "<h2>Pedido entregado</h2>"
-                        + "<p>Tu pedido #" + pedido.getId() + " ha sido entregado con éxito.</p>"
-                        + "<p>Esperamos que disfrutes tu arreglo floral. ¡Vuelve pronto!</p>";
+                asunto = "¡Pedido #" + pedido.getId() + " entregado con éxito!";
+                cuerpo = EmailTemplates.notificacionEntregado(pedido.getId(), frontendUrl);
                 break;
             case CANCELADO:
-                asunto = "Pedido #" + pedido.getId() + " cancelado";
-                cuerpo = "<h2>Pedido cancelado</h2>"
-                        + "<p>Tu pedido #" + pedido.getId() + " ha sido cancelado.</p>"
-                        + "<p>Si tienes dudas, contáctanos para más información.</p>";
+                asunto = "Tu pedido #" + pedido.getId() + " ha sido cancelado";
+                cuerpo = EmailTemplates.notificacionCancelado(pedido.getId(), frontendUrl);
                 break;
             default:
                 return;

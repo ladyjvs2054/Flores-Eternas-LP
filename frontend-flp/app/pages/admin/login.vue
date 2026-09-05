@@ -73,7 +73,7 @@
               <NuxtLink
                 to="/admin/recuperar-contrasena"
                 data-testid="link-olvide-contrasena"
-                class="select-text no-underline text-sm text-[#FFEDE3] hover:text-[#F0D3C1] hover:underline transition-colors font-['Poppins'] cursor-pointer"
+                class="select-text no-underline text-sm font-medium text-[#83572E] hover:text-[#5C3A21] hover:underline transition-colors font-['Poppins'] cursor-pointer"
               >
                 He olvidado mi contraseña
               </NuxtLink>
