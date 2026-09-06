@@ -1,28 +1,32 @@
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Replace main with testint
+name: Sync testing → main (reset hard)
 
 on:
   push:
     branches:
-      - testing
+      - testing   # se dispara cuando hay cambios en testing
 
 jobs:
-  replace:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Set up Git
+      - name: Configurar Git
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-      - name: Force main = testint
+      - name: Reset main = testing
         run: |
+          # nos aseguramos de estar en testing
           git checkout testing
+          # creamos/actualizamos main apuntando al commit actual
           git checkout -B main
+          # forzamos push para reemplazar main
           git push origin main --force
